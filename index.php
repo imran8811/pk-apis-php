@@ -1,11 +1,9 @@
 <?php
+$request_method = $_SERVER['REQUEST_METHOD'];
 
-include_once "router.php";
-$router = new Router();
-
-$router->addRoute('GET', '/blogs', function () {
-    echo "My route is working!";
-    exit;
-});
-
-$router->matchRoute();
+if(!$request_method){
+  exit();
+} else {
+  echo 'Invalid Path';
+  exit();
+}

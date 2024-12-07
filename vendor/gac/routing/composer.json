@@ -1,0 +1,64 @@
+{
+  "name": "gac/routing",
+  "type": "library",
+  "description": "Custom routing library especially useful for fast API development",
+  "homepage": "https://github.com/gigili/PHP-routing",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "route",
+    "routing",
+    "libray",
+    "middleware",
+    "api"
+  ],
+  "authors": [
+    {
+      "name": "Igor Ilić",
+      "email": "github@igorilic.net",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "github@igorilic.net",
+    "issues": "https://github.com/gigili/PHP-routing"
+  },
+  "funding": [
+    {
+      "type": "paypal",
+      "url": "https://paypal.me/igorili"
+    },
+    {
+      "type": "ko-fi",
+      "url": "https://ko-fi.com/igorilic"
+    }
+  ],
+  "require": {
+    "php" : ">=8.0",
+    "ext-json" : "*",
+    "ext-mbstring" : "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Gac\\Routing\\": "./src",
+      "Gac\\Routing\\Exceptions\\" : "./src/Exceptions"
+    }
+  },
+  "require-dev" : {
+    "pestphp/pest" : "^1.21"
+  },
+  "config" : {
+    "sort-packages" : true,
+    "allow-plugins" : {
+      "pestphp/pest-plugin" : true
+    },
+    "optimize-autoloader" : true,
+    "preferred-install" : "dist"
+  },
+  "extra" : {
+    "branch-alias" : {
+      "dev-master" : "3.x-dev"
+    }
+  },
+  "prefer-stable" : true,
+  "minimum-stability" : "dev"
+}

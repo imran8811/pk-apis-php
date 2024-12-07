@@ -1,0 +1,5 @@
+{
+    "require": {
+        "gac/routing": "^3.1"
+    }
+}

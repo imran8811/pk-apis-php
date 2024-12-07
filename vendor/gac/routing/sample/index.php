@@ -12,53 +12,33 @@ use Gac\Routing\sample\InjectController;
 use Gac\Routing\sample\InjectedClass;
 use Gac\Routing\sample\Middleware;
 
-include_once './vendor/autoload.php'; # IF YOU'RE USING composer
+#include_once "../Routes.php"; # IF YOU'RE NOT USING composer
+	#include_once "HomeController.php"; # IF YOU'RE NOT USING composer
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-	header('Access-Control-Allow-Origin: *');
-	header('Access-Control-Allow-Methods: POST, GET, DELETE, PUT, PATCH, OPTIONS');
-	header('Access-Control-Allow-Headers: token, Content-Type');
-	header('Access-Control-Max-Age: 1728000');
-	header('Content-Length: 0');
-	header('Content-Type: text/plain');
-	die();
-}
+	include_once '../vendor/autoload.php'; # IF YOU'RE USING composer
 
-header('Access-Control-Allow-Origin: *');
-header('Content-Type: application/json');
+	if ( !class_exists('InjectedClass') ) {
+		require_once './InjectedClass.php';
+	}
 
+	if ( !class_exists('InjectController') ) {
+		require_once './InjectController.php';
+	}
 
-	// if ( !class_exists('InjectedClass') ) {require_once './InjectedClass.php';}
-	// if ( !class_exists('InjectController') ) {require_once './InjectController.php';}
-	// if ( !class_exists('Middleware') ) {require_once './Middleware.php';}
-	// if ( !class_exists('HomeController') ) {require_once './HomeController.php';}
-	if ( !class_exists('ProductController') ) {require_once './App/controllers/Product.php';}
-	if ( !class_exists('AdminUserController') ) {require_once './App/controllers/Admin_User.php';}
+	if ( !class_exists('Middleware') ) {
+		require_once './Middleware.php';
+	}
 
-	$base_url = '/pk-apis-php';
+	if ( !class_exists('HomeController') ) {
+		require_once './HomeController.php';
+	}
+
 	$routes = new Routes();
 
 	try {
-
-		$routes
-			->prefix($base_url.'/product')
-			->route('/getAll', [ ProductController::class, 'getAll' ], Routes::GET)
-			->route('/getById/{id}', [ ProductController::class, 'getById' ], Routes::GET)
-			->route('/{dept}', [ ProductController::class, 'getByDept' ], Routes::GET)
-			->route('/{id}', [ ProductController::class, 'updateProduct' ], Routes::POST)
-			->route('/addProduct', [ ProductController::class, 'addProduct' ], Routes::POST)
-			->route('/getLatestArticleNo', [ ProductController::class, 'getLatestArticleNo' ], Routes::GET)
-			->route('/updateImagePath', [ ProductController::class, 'updateImagePath' ], Routes::POST)
-			->add('/{id}', [ ProductController::class, 'deleteById' ], Routes::DELETE);
-
-		$routes
-			->prefix($base_url.'/admin')
-			->route('/login', [ AdminUserController::class, 'login' ], Routes::POST)
-			->route('/', [ AdminUserController::class, 'addUser' ], Routes::POST)
-			->route('/', [ AdminUserController::class, 'updateUser' ], Routes::PATCH)
-			->route('/', [ AdminUserController::class, 'replaceUser' ], Routes::PUT)
-			->add('/test', [ AdminUserController::class, 'deleteUser' ], Routes::DELETE);
-
+		$routes->add('/', function (Request $request) {
+			echo json_encode([ 'message' => 'Hello World' ]);
+		});
 
 		// When using chained method calls either use `save()` or `add()` method at the end to indicate an end of a chain
 		// save() method can still be chained onto if needed, but add() can not
@@ -95,6 +75,15 @@ header('Content-Type: application/json');
 
 		$routes->add("/home/test", [ HomeController::class, "home" ]);
 
+		$routes
+			->prefix('/user')
+			->middleware([ 'verify_token' ])
+			->route('/', [ HomeController::class, 'getUsers' ], Routes::GET)
+			->route('/', [ HomeController::class, 'addUser' ], Routes::POST)
+			->route('/', [ HomeController::class, 'updateUser' ], Routes::PATCH)
+			->route('/', [ HomeController::class, 'replaceUser' ], Routes::PUT)
+			->add('/test', [ HomeController::class, 'deleteUser' ], Routes::DELETE);
+
 		$routes->add('/test', function () {
 		}, [ Routes::PATCH, Routes::POST ]);
 
@@ -128,7 +117,8 @@ header('Content-Type: application/json');
 			echo 'Dynamic route here';
 		});
 
-		$routes->add('/test/{int:userID}-{username}/{float:amount}/{bool:valid}',
+		$routes->add(
+			'/test/{int:userID}-{username}/{float:amount}/{bool:valid}',
 			[ HomeController::class, 'test' ],
 			[ Routes::PUT ]
 		); # It works like this also
@@ -188,16 +178,16 @@ header('Content-Type: application/json');
 					->send([ "message" => "hello" ]);
 		}, Routes::GET);
 
-		// $routes->add(
-		// 	'/demo',
-		// 	[ HomeController::class, 'dependency_injection_test', [ new InjectedClass() ] ],
-		// 	Routes::GET
-		// );
+		$routes->add(
+			'/demo',
+			[ HomeController::class, 'dependency_injection_test', [ new InjectedClass() ] ],
+			Routes::GET
+		);
 
-		// $routes->add(
-		// 	"/inject",
-		// 	[ InjectController::class ]
-		// );
+		$routes->add(
+			"/inject",
+			[ InjectController::class ]
+		);
 
 		#echo "<pre>";
 		#print_r($routes->get_routes());
@@ -215,7 +205,7 @@ header('Content-Type: application/json');
 						->send([ 'error' => [ 'message' => $ex->getMessage() ] ]);
 	} catch ( Exception $ex ) {
 		$code = $ex->getCode() ?? 500;
-		$routes->request->status(400)->send([ 'error' => [ 'message' => $ex->getMessage() ] ]);
+		$routes->request->status($code)->send([ 'error' => [ 'message' => $ex->getMessage() ] ]);
 	}
 
 	function test_route_function() : void {

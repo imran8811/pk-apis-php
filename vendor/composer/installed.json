@@ -1,0 +1,80 @@
+{
+    "packages": [
+        {
+            "name": "gac/routing",
+            "version": "v3.1.7",
+            "version_normalized": "3.1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gigili/PHP-routing.git",
+                "reference": "72e28794ee4f6421fbb06394e0a722853952174c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gigili/PHP-routing/zipball/72e28794ee4f6421fbb06394e0a722853952174c",
+                "reference": "72e28794ee4f6421fbb06394e0a722853952174c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "php": ">=8.0"
+            },
+            "require-dev": {
+                "pestphp/pest": "^1.21"
+            },
+            "time": "2024-08-22T19:15:50+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Gac\\Routing\\": "./src",
+                    "Gac\\Routing\\Exceptions\\": "./src/Exceptions"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "Igor Ilić",
+                    "email": "github@igorilic.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Custom routing library especially useful for fast API development",
+            "homepage": "https://github.com/gigili/PHP-routing",
+            "keywords": [
+                "api",
+                "libray",
+                "middleware",
+                "route",
+                "routing"
+            ],
+            "support": {
+                "email": "github@igorilic.net",
+                "issues": "https://github.com/gigili/PHP-routing",
+                "source": "https://github.com/gigili/PHP-routing/tree/v3.1.7"
+            },
+            "funding": [
+                {
+                    "url": "https://ko-fi.com/igorilic",
+                    "type": "ko-fi"
+                },
+                {
+                    "url": "https://paypal.me/igorili",
+                    "type": "paypal"
+                }
+            ],
+            "install-path": "../gac/routing"
+        }
+    ],
+    "dev": true,
+    "dev-package-names": []
+}

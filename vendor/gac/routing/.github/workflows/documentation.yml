@@ -1,0 +1,53 @@
+name: Automatically update project documentation
+
+on:
+  push:
+    branches:
+      - main
+env:
+  extensions: 'json,mbstring'
+  defaultPHPVersion: '8.1.10'
+
+jobs:
+  generate_docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ env.defaultPHPVersion }}
+          extensions: ${{ env.extensions }}
+          ini-values: memory_limit=2G, display_errors=On, error_reporting=-1
+          tools: pecl
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-composer-${{ hashFiles('composer.lock') }}
+
+      - name: Install Composer dependencies
+        run: composer install -q --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
+
+      - name: Generate Documentation
+        run: |
+          git config --global user.email "${{ secrets.DOCS_GITHUB_EMAIL }}"
+          git config --global user.name "${{ secrets.DOCS_GITHUB_USER }}"
+          git remote set-url origin https://gigili:${{ secrets.WIKI_GITHUB_UPDATE_TOKEN }}@github.com/gigili/PHP-routing.git
+          mkdir bin
+          cd bin/
+          wget https://phpdoc.org/phpDocumentor.phar
+          cd ..
+          mkdir -p ./docs
+          php bin/phpDocumentor.phar run -d ./ -t ./docs --ignore vendor/ --ignore sample/ --ignore tests/ --setting="guides.enabled=true" --force -v
+          rm -r bin/
+          git add .
+          if [[ $(git commit -am "[AUTO] Update documentation") != *"Nothing to commit"* ]]; then
+            echo "::debug::Pushing new documentation changes"
+            git push origin main
+          else
+            echo "::debug::Nothing to commit and skipping push"
+          fi
